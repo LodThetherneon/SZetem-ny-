@@ -836,6 +836,25 @@
 	 * Indulás
 	 * --------------------------------------------------------------- */
 
+	/* ------------------------------------------------------------------
+	 * Mentősáv: jelzi, ha van még nem mentett módosítás
+	 * --------------------------------------------------------------- */
+
+	function initDirty() {
+		var form = document.querySelector( '.szesuti-settings-form' );
+		var label = form && form.querySelector( '[data-szesuti-dirty-label]' );
+		if ( ! label ) {
+			return;
+		}
+		var bar = label.parentNode;
+		function mark() {
+			bar.classList.add( 'is-dirty' );
+		}
+		// Az init alatti programozott események már lefutottak, ez innentől csak a valódi szerkesztést jelzi.
+		form.addEventListener( 'input', mark );
+		form.addEventListener( 'change', mark );
+	}
+
 	function init() {
 		initScrollKeeper();
 		initColors();
@@ -847,6 +866,7 @@
 		initPreview();
 		initLibrary();
 		initCookieAutofill();
+		initDirty();
 	}
 
 	if ( document.readyState === 'loading' ) {

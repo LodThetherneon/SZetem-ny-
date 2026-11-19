@@ -204,6 +204,15 @@ class SZESUTI_Frontend {
 		$dark  = SZESUTI_Colors::safe_palette( isset( $a['colors_dark'] ) ? (array) $a['colors_dark'] : array() );
 		$dark  = $dark['colors'];
 
+		// A lebegő gomb saját színei (témánként ellenőrizve, mert az automatikus
+		// háttér a világos és a sötét témában más).
+		$reopen_bg = (string) $this->settings->get( 'general.reopen_bg', '' );
+		$reopen_fg = (string) $this->settings->get( 'general.reopen_fg', '' );
+		$light_rc  = SZESUTI_Colors::reopen_colors( $light, $reopen_bg, $reopen_fg );
+		$dark_rc   = SZESUTI_Colors::reopen_colors( $dark, $reopen_bg, $reopen_fg );
+		$light     = array_merge( $light, $light_rc['colors'] );
+		$dark      = array_merge( $dark, $dark_rc['colors'] );
+
 		$shadows = array(
 			'none' => 'none',
 			'sm'   => '0 1px 3px rgba(12,18,32,.10)',

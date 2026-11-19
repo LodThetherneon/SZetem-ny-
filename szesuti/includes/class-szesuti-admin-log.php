@@ -15,9 +15,13 @@ class SZESUTI_Admin_Log {
 	/** @var SZESUTI_Log */
 	private $log;
 
-	public function __construct( SZESUTI_Settings $settings, SZESUTI_Log $log ) {
+	/** @var SZESUTI_Admin|null A közös fejléc és navigáció. */
+	private $admin;
+
+	public function __construct( SZESUTI_Settings $settings, SZESUTI_Log $log, $admin = null ) {
 		$this->settings = $settings;
 		$this->log      = $log;
+		$this->admin    = $admin instanceof SZESUTI_Admin ? $admin : null;
 	}
 
 	/** Az oldal kirajzolása. */
@@ -48,7 +52,15 @@ class SZESUTI_Admin_Log {
 		);
 
 		echo '<div class="wrap szesuti-wrap">';
-		echo '<h1>' . esc_html__( 'Hozzájárulás-napló', 'szesuti' ) . '</h1>';
+		if ( $this->admin ) {
+			echo '<hr class="wp-header-end">';
+			$this->admin->render_header();
+			$this->admin->open_shell( 'log-page' );
+			echo '<div class="szesuti-panel">';
+			SZESUTI_F::section( __( 'Hozzájárulás-napló', 'szesuti' ) );
+		} else {
+			echo '<h1>' . esc_html__( 'Hozzájárulás-napló', 'szesuti' ) . '</h1>';
+		}
 
 		if ( 'log_purged' === $message ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'A napló kiürítve.', 'szesuti' ) . '</p></div>';
@@ -66,7 +78,7 @@ class SZESUTI_Admin_Log {
 
 		if ( ! SZESUTI_Log::table_exists() ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'A napló adatbázistáblája hiányzik. Kapcsold ki, majd újra be a plugint.', 'szesuti' ) . '</p></div>';
-			echo '</div>';
+			$this->close();
 			return;
 		}
 
@@ -125,6 +137,7 @@ class SZESUTI_Admin_Log {
 			?>
 		</p>
 
+		<div class="szesuti-table-scroll">
 		<table class="widefat striped szesuti-log-table">
 			<thead>
 				<tr>
@@ -163,6 +176,7 @@ class SZESUTI_Admin_Log {
 				<?php endif; ?>
 			</tbody>
 		</table>
+		</div>
 
 		<?php if ( $pages > 1 ) : ?>
 			<div class="tablenav"><div class="tablenav-pages">
@@ -183,8 +197,17 @@ class SZESUTI_Admin_Log {
 			</div></div>
 		<?php endif; ?>
 
-		</div>
 		<?php
+		$this->close();
+	}
+
+	/** Az oldal lezárása (a közös keretben a panel és a navigáció is). */
+	private function close() {
+		if ( $this->admin ) {
+			echo '</div>';
+			$this->admin->close_shell();
+		}
+		echo '</div>';
 	}
 
 	/**

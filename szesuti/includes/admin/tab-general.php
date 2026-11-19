@@ -198,6 +198,40 @@ SZESUTI_F::icon_picker(
 	)
 );
 
+SZESUTI_F::row_start(
+	__( 'Színek', 'szesuti' ),
+	'',
+	__( 'Üresen hagyva a banner színeit követi (háttér: a banner háttere, ikon: az elfogadás gomb színe). Az × visszaállítja az automatikusra.', 'szesuti' )
+);
+echo '<div class="szesuti-color-pair">';
+SZESUTI_F::color(
+	array( 'general', 'reopen_bg' ),
+	$g['reopen_bg'],
+	array(
+		'label'    => __( 'Háttér', 'szesuti' ),
+		'optional' => true,
+		'fallback' => ! empty( $s['appearance']['colors']['bg'] ) ? $s['appearance']['colors']['bg'] : '#ffffff',
+	)
+);
+SZESUTI_F::color(
+	array( 'general', 'reopen_fg' ),
+	$g['reopen_fg'],
+	array(
+		'label'    => __( 'Ikon', 'szesuti' ),
+		'optional' => true,
+		'fallback' => ! empty( $s['appearance']['colors']['primary'] ) ? $s['appearance']['colors']['primary'] : '#2d6cdf',
+	)
+);
+echo '</div>';
+
+// Kontrasztőr: ha az ikon a háttéren nem látszana, a gomb olvasható színt kap helyette.
+$szesuti_reopen_check = SZESUTI_Colors::safe_palette( (array) $s['appearance']['colors'] );
+$szesuti_reopen_check = SZESUTI_Colors::reopen_colors( $szesuti_reopen_check['colors'], $g['reopen_bg'], $g['reopen_fg'] );
+if ( $szesuti_reopen_check['fixed'] ) {
+	SZESUTI_F::notice( __( 'Az ikon színe ezen a háttéren alig látszana, ezért a gomb <strong>automatikusan jól látható színt használ</strong> helyette.', 'szesuti' ), 'warning' );
+}
+SZESUTI_F::row_end();
+
 SZESUTI_F::select(
 	array( 'general', 'reopen_position' ),
 	$g['reopen_position'],

@@ -206,4 +206,44 @@ class SZESUTI_Colors {
 			'fixes'  => array_values( array_unique( $fixes ) ),
 		);
 	}
+
+	/**
+	 * A lebegő újranyitó gomb színei egy (már biztonságos) színkészlethez.
+	 *
+	 * Üres háttér: a banner háttere, üres ikonszín: a kiemelőszín – ez a korábbi
+	 * megjelenés. Ha bármelyik meg van adva, az ikonnak a tényleges háttéren is
+	 * látszania kell (UI_MIN), különben olvasható színt kap helyette.
+	 *
+	 * @param array  $palette A safe_palette() által adott színek.
+	 * @param string $bg      Beállított háttér (üres: automatikus).
+	 * @param string $fg      Beállított ikonszín (üres: automatikus).
+	 * @return array{colors: array, fixed: bool} A CSS-be írandó változók (kulcs => szín).
+	 */
+	public static function reopen_colors( array $palette, $bg, $fg ) {
+		$bg = (string) $bg;
+		$fg = (string) $fg;
+		if ( '' === $bg && '' === $fg ) {
+			return array(
+				'colors' => array(),
+				'fixed'  => false,
+			);
+		}
+
+		$real_bg = '' !== $bg ? $bg : ( isset( $palette['bg'] ) ? (string) $palette['bg'] : '#ffffff' );
+		$auto_fg = isset( $palette['primary_fg'] ) ? (string) $palette['primary_fg'] : '#2d6cdf';
+		$wanted  = '' !== $fg ? $fg : $auto_fg;
+		$safe    = self::ensure( $wanted, $real_bg, self::UI_MIN, $auto_fg );
+
+		$out = array( 'reopen_fg' => $safe );
+		if ( '' !== $bg ) {
+			$out['reopen_bg'] = $bg;
+			// Színes kitöltésnél a világos keret idegen lenne: a gomb kerete a saját színe.
+			$out['reopen_border'] = $bg;
+		}
+
+		return array(
+			'colors' => $out,
+			'fixed'  => '' !== $fg && strtolower( $safe ) !== strtolower( $fg ),
+		);
+	}
 }

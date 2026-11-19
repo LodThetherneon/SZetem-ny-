@@ -956,10 +956,11 @@
 	z-index: calc( var( --szesuti-z ) - 2 );
 	width: 48px;
 	height: 48px;
-	border: 1px solid var( --szesuti-border );
+	border: 1px solid var( --szesuti-reopen-border, var( --szesuti-border ) );
 	border-radius: 50%;
-	color: var( --szesuti-primary-fg, var( --szesuti-primary ) );
-	background: var( --szesuti-bg );
+	/* Saját szín az Általános → Lebegő gomb alatt; üresen a banner színeit követi. */
+	color: var( --szesuti-reopen-fg, var( --szesuti-primary-fg, var( --szesuti-primary ) ) );
+	background: var( --szesuti-reopen-bg, var( --szesuti-bg ) );
 	box-shadow: 0 6px 18px rgba( 12, 18, 32, 0.18 );
 	opacity: 0.9;
 	transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
@@ -982,8 +983,8 @@
 
 #szesuti-root .szesuti-reopen:hover,
 #szesuti-root .szesuti-reopen:focus-visible {
-	color: var( --szesuti-primary-fg, var( --szesuti-primary ) );
-	background: var( --szesuti-bg );
+	color: var( --szesuti-reopen-fg, var( --szesuti-primary-fg, var( --szesuti-primary ) ) );
+	background: var( --szesuti-reopen-bg, var( --szesuti-bg ) );
 	opacity: 1;
 	transform: scale( 1.06 );
 	box-shadow: 0 8px 24px rgba( 12, 18, 32, 0.22 );
@@ -1018,6 +1019,232 @@
 #szesuti-root.is-open .szesuti-reopen,
 #szesuti-root.is-modal-open .szesuti-reopen {
 	display: none;
+}
+
+/* =========================================================================
+ * 10/b. Modern kinézet (Megjelenés → Kinézet: Modern)
+ *
+ * Csak vizuális felülírások: a méretezést, a görgetést és a „gombok mindig
+ * látszanak” garanciát a fenti közös szabályok adják, ezekhez itt nem nyúlunk.
+ * Jellemzői: kiemelőszínű csík a doboz tetején, az ikon a cím fölött, nagyobb
+ * cím, a gombsor a doboz alján egy halvány, teljes szélességű sávban, a sáv
+ * elrendezés a képernyő szélétől elemelt „dokk”, és a beállítások ablakban
+ * kártyák helyett vonallal elválasztott sorok.
+ * ====================================================================== */
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-banner,
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__dialog {
+	box-shadow: inset 0 3px 0 var( --szesuti-primary ), var( --szesuti-shadow );
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-banner__head {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 14px;
+	margin-bottom: 8px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-icon:not( .szesuti-icon--image ) {
+	flex: none;
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	color: var( --szesuti-primary-text );
+	background: var( --szesuti-primary );
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-icon:not( .szesuti-icon--image ) svg {
+	width: 20px;
+	height: 20px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-icon--image {
+	max-width: 60%;
+	flex-basis: auto;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-banner__title {
+	font-size: 1.32em;
+	font-weight: 750;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-banner__message {
+	margin-bottom: 12px;
+	line-height: 1.6;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-links {
+	gap: 4px 14px;
+	margin-bottom: 18px;
+	font-size: 0.88em;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-link {
+	color: var( --szesuti-muted );
+	text-decoration-color: color-mix( in srgb, var( --szesuti-muted ) 45%, transparent );
+	text-underline-offset: 3px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-link:hover,
+#szesuti-root[data-szesuti-design="modern"] .szesuti-link:focus-visible {
+	color: var( --szesuti-text );
+	text-decoration-color: currentColor;
+	opacity: 1;
+}
+
+/* A Beállítások gomb szövegszerű: kevésbé hangos, mint a két döntés. */
+#szesuti-root[data-szesuti-design="modern"] .szesuti-btn--ghost {
+	background: var( --szesuti-tertiary, transparent );
+	border-color: var( --szesuti-tertiary-border, transparent );
+	color: var( --szesuti-tertiary-text, var( --szesuti-text ) );
+	text-decoration: underline;
+	text-decoration-color: color-mix( in srgb, currentColor 35%, transparent );
+	text-underline-offset: 3px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-btn--ghost:hover {
+	background: var( --szesuti-tertiary, color-mix( in srgb, var( --szesuti-secondary ) 70%, transparent ) );
+	border-color: var( --szesuti-tertiary-border, transparent );
+	text-decoration-color: currentColor;
+	filter: none;
+}
+
+/* Doboz és középre igazított ablak: a gombsor a doboz alján, teljes szélességben. */
+#szesuti-root[data-szesuti-design="modern"]:not( [data-szesuti-layout="bar"] ) .szesuti-banner .szesuti-actions {
+	order: 2;
+	margin: 2px calc( -1 * var( --szesuti-pad ) ) calc( -1 * var( --szesuti-pad ) );
+	padding: 14px var( --szesuti-pad );
+	background: color-mix( in srgb, var( --szesuti-secondary ) 55%, var( --szesuti-bg ) );
+	border-top: 1px solid var( --szesuti-border );
+}
+
+#szesuti-root[data-szesuti-design="modern"]:not( [data-szesuti-layout="bar"] ) .szesuti-powered {
+	order: 1;
+	margin: 0 0 12px;
+}
+
+/* Sáv: elemelt, lekerekített „dokk” a képernyő alján vagy tetején. */
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"] .szesuti-banner {
+	left: 16px;
+	right: 16px;
+	width: auto;
+	max-width: 1240px;
+	margin: 0 auto;
+	border: 1px solid var( --szesuti-border );
+	border-radius: var( --szesuti-radius );
+	box-shadow: inset 4px 0 0 var( --szesuti-primary ), var( --szesuti-shadow );
+}
+
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"][data-szesuti-position^="bottom"] .szesuti-banner {
+	bottom: 16px;
+}
+
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"][data-szesuti-position^="top"] .szesuti-banner {
+	top: 16px;
+}
+
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"] .szesuti-banner__head {
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+}
+
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"] .szesuti-banner__title {
+	font-size: 1.12em;
+}
+
+#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"] .szesuti-links {
+	margin-bottom: 0;
+}
+
+/* --- Beállítások ablak --- */
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__head {
+	padding-top: 22px;
+	padding-bottom: 10px;
+	border-bottom: 0;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__title {
+	font-size: 1.4em;
+	font-weight: 750;
+	letter-spacing: -0.02em;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__body {
+	padding-top: 4px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__intro {
+	margin-bottom: 18px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cats {
+	border-top: 1px solid var( --szesuti-border );
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cat {
+	margin: 0;
+	border: 0;
+	border-bottom: 1px solid var( --szesuti-border );
+	border-radius: 0;
+	background: transparent;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cat__head {
+	padding: 8px 0;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cat__expand {
+	padding-left: 0;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cat__expand:hover {
+	background: transparent;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-cat__panel {
+	padding: 0 0 18px 24px;
+}
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__foot {
+	background: color-mix( in srgb, var( --szesuti-secondary ) 55%, var( --szesuti-bg ) );
+}
+
+/* --- Lebegő gomb: lekerekített négyzet --- */
+
+#szesuti-root[data-szesuti-design="modern"] .szesuti-reopen {
+	border-radius: 15px;
+}
+
+@media ( max-width: 600px ) {
+	#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"] .szesuti-banner {
+		left: 10px;
+		right: 10px;
+	}
+
+	#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"][data-szesuti-position^="bottom"] .szesuti-banner {
+		bottom: 10px;
+	}
+
+	#szesuti-root[data-szesuti-design="modern"][data-szesuti-layout="bar"][data-szesuti-position^="top"] .szesuti-banner {
+		top: 10px;
+	}
+
+	#szesuti-root[data-szesuti-design="modern"] .szesuti-cat__panel {
+		padding-left: 0;
+	}
+}
+
+@supports not ( color: color-mix( in srgb, red 50%, blue ) ) {
+	#szesuti-root[data-szesuti-design="modern"]:not( [data-szesuti-layout="bar"] ) .szesuti-banner .szesuti-actions,
+	#szesuti-root[data-szesuti-design="modern"] .szesuti-modal__foot {
+		background: var( --szesuti-secondary );
+	}
 }
 
 /* =========================================================================

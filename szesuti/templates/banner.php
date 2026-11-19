@@ -114,6 +114,7 @@ $szesuti_order = array_filter( explode( ',', (string) $appearance['btn_order'] )
 <div
 	class="szesuti-root"
 	id="szesuti-root"
+	data-szesuti-design="<?php echo esc_attr( isset( $appearance['design'] ) ? $appearance['design'] : 'classic' ); ?>"
 	data-szesuti-layout="<?php echo esc_attr( $appearance['layout'] ); ?>"
 	data-szesuti-position="<?php echo esc_attr( $appearance['position'] ); ?>"
 	data-szesuti-animation="<?php echo esc_attr( $appearance['animation'] ); ?>"

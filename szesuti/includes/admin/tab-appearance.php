@@ -13,6 +13,35 @@ defined( 'ABSPATH' ) || exit;
 $a = $s['appearance'];
 
 SZESUTI_F::section(
+	__( 'Kinézet', 'szesuti' ),
+	__( 'A banner és a beállítások ablak stílusa. A színek, a méretek és az elrendezés mindkettőnél ugyanazok a lenti beállítások szerint.', 'szesuti' )
+);
+
+SZESUTI_F::table_start();
+
+SZESUTI_F::design_picker(
+	array( 'appearance', 'design' ),
+	$a['design'],
+	array(
+		'classic' => array(
+			'label' => __( 'Klasszikus', 'szesuti' ),
+			'desc'  => __( 'Az eddigi megjelenés: ikon a cím mellett, a gombok a szöveg alatt.', 'szesuti' ),
+		),
+		'modern'  => array(
+			'label' => __( 'Modern', 'szesuti' ),
+			'desc'  => __( 'Kiemelőszínű csík felül, nagyobb cím, a gombok egy külön sávban a doboz alján. A sáv elrendezés lebegő dokk lesz.', 'szesuti' ),
+		),
+	),
+	array(
+		'label' => __( 'Banner kinézete', 'szesuti' ),
+	)
+);
+
+SZESUTI_F::table_end();
+
+/* ------------------------------------------------------------------ */
+
+SZESUTI_F::section(
 	__( 'Elrendezés', 'szesuti' ),
 	__( 'A banner alakja és helye. Mobilon minden elrendezés automatikusan teljes szélességű lesz.', 'szesuti' )
 );

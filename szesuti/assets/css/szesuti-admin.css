@@ -1,15 +1,34 @@
 /**
  * SZetemény – admin felület stílusa.
+ *
+ * Felépítés: fejléc a WordPress szürke hátterén, alatta kétoszlopos keret –
+ * balra a navigáció (beállítások fülei + Háttéradatbázis + napló), jobbra egy
+ * fehér panel. A kiemelőszín a WordPress felhasználói színsémáját követi
+ * (--wp-admin-theme-color), így az admin többi részével együtt változik.
  */
 
 .szesuti-wrap {
-	--szs-border: #dcdfe6;
-	--szs-bg: #fff;
+	--szs-ink: #1d2327;
+	--szs-text: #2c3338;
 	--szs-muted: #646970;
-	--szs-accent: #2271b1;
-	--szs-radius: 10px;
+	--szs-faint: #8c8f94;
+	--szs-border: #e0e2e6;
+	--szs-hair: #eef0f2;
+	--szs-bg: #fff;
+	--szs-soft: #f6f7f7;
+	--szs-accent: var( --wp-admin-theme-color, #2271b1 );
+	--szs-accent-soft: #eef4fa;
+	--szs-radius: 8px;
+	--szs-pad: 28px;
 
-	max-width: none;
+	max-width: 1480px;
+	color: var( --szs-text );
+}
+
+@supports ( color: color-mix( in srgb, red 50%, blue ) ) {
+	.szesuti-wrap {
+		--szs-accent-soft: color-mix( in srgb, var( --szs-accent ) 9%, #fff );
+	}
 }
 
 /* ---------------------------------------------------------------- Fejléc */
@@ -20,31 +39,31 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	padding: 18px 22px;
-	margin: 16px 0 0;
-	background: var( --szs-bg );
-	border: 1px solid var( --szs-border );
-	border-radius: var( --szs-radius ) var( --szs-radius ) 0 0;
+	margin: 14px 0 0;
+	padding: 0 0 18px;
+	border-bottom: 1px solid #dcdcde;
 }
 
 .szesuti-header__brand {
 	display: flex;
 	align-items: center;
-	gap: 18px;
+	gap: 16px;
 	min-width: 0;
 }
 
 .szesuti-header__org {
 	display: block;
 	flex: none;
+	padding-right: 16px;
 	line-height: 0;
-	border-radius: 4px;
+	border-right: 1px solid #dcdcde;
+	border-radius: 0;
 }
 
 .szesuti-header__org img {
 	display: block;
 	width: auto;
-	height: 76px;
+	height: 52px;
 }
 
 .szesuti-header__org:focus-visible {
@@ -53,58 +72,59 @@
 	box-shadow: none;
 }
 
-.szesuti-header__sep {
-	flex: none;
-	align-self: stretch;
-	width: 1px;
-	margin: 4px 0;
-	background: var( --szs-border );
-}
-
 .szesuti-header__text {
 	min-width: 0;
 }
 
-.szesuti-header h1 {
-	display: flex;
-	align-items: center;
+.szesuti-wrap .szesuti-header h1 {
 	margin: 0;
 	padding: 0;
-	font-size: 21px;
-	line-height: 1.2;
-	letter-spacing: 0.02em;
+	font-size: 22px;
+	font-weight: 650;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	color: var( --szs-ink );
 }
 
 .szesuti-header p {
 	margin: 4px 0 0;
-	color: var( --szs-muted );
 	font-size: 13px;
-}
-
-.szesuti-header p.szesuti-header__author {
-	margin-top: 6px;
-	font-size: 12px;
-}
-
-.szesuti-header__author strong {
-	color: #1d2327;
-	font-weight: 600;
-}
-
-@media ( max-width: 600px ) {
-	.szesuti-header__org img {
-		height: 56px;
-	}
-
-	.szesuti-header__brand {
-		gap: 12px;
-	}
+	color: var( --szs-muted );
 }
 
 .szesuti-header__meta {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 14px;
+}
+
+.szesuti-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var( --szs-ink );
+}
+
+.szesuti-status::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #00a32a;
+	box-shadow: 0 0 0 3px #d7f3e3;
+}
+
+.szesuti-status--off::before {
+	background: #d63638;
+	box-shadow: 0 0 0 3px #fbe3e3;
+}
+
+.szesuti-header__version {
+	font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+	font-size: 12px;
+	color: var( --szs-faint );
 }
 
 .szesuti-badge {
@@ -128,94 +148,239 @@
 	background: #fbe3e3;
 }
 
-/* ------------------------------------------------------------------ Fülek */
+/* ------------------------------------------------- Keret és navigáció */
 
-.szesuti-tabs {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 2px;
-	padding: 0 12px;
-	background: #f6f7f7;
-	border: 1px solid var( --szs-border );
-	border-top: 0;
+.szesuti-shell {
+	display: grid;
+	grid-template-columns: 212px minmax( 0, 1fr );
+	align-items: start;
+	gap: 24px;
+	margin-top: 20px;
 }
 
-.szesuti-tab {
-	position: relative;
-	padding: 12px 14px;
+.szesuti-main {
+	min-width: 0;
+}
+
+.szesuti-nav {
+	position: sticky;
+	top: 52px;
+}
+
+.szesuti-nav ul {
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.szesuti-nav li {
+	margin: 0 0 1px;
+}
+
+.szesuti-nav__group {
+	margin: 0 0 6px 10px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var( --szs-faint );
+}
+
+.szesuti-nav__item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 7px 10px;
 	font-size: 13px;
 	font-weight: 500;
-	color: #50575e;
+	line-height: 1.35;
+	color: var( --szs-text );
 	text-decoration: none;
-	border-bottom: 2px solid transparent;
+	border-radius: 6px;
 }
 
-.szesuti-tab:hover {
-	color: var( --szs-accent );
+.szesuti-nav__item .dashicons {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	color: var( --szs-faint );
 }
 
-.szesuti-tab.is-active {
-	color: var( --szs-accent );
+.szesuti-nav__item:hover {
+	color: var( --szs-ink );
+	background: rgba( 0, 0, 0, 0.045 );
+}
+
+.szesuti-nav__item:hover .dashicons {
+	color: var( --szs-muted );
+}
+
+.szesuti-nav__item.is-active {
+	color: var( --szs-ink );
 	font-weight: 600;
-	border-bottom-color: var( --szs-accent );
+	background: var( --szs-bg );
+	box-shadow: 0 0 0 1px var( --szs-border ), 0 1px 2px rgba( 0, 0, 0, 0.04 );
 }
 
-.szesuti-tab:focus {
+.szesuti-nav__item.is-active .dashicons {
+	color: var( --szs-accent );
+}
+
+.szesuti-nav__item:focus {
 	box-shadow: none;
-	outline: 1px solid var( --szs-accent );
+	outline: 2px solid var( --szs-accent );
 	outline-offset: -2px;
+}
+
+.szesuti-nav__credit {
+	margin: 4px 10px 0;
+	padding-top: 14px;
+	font-size: 11px;
+	line-height: 1.5;
+	color: var( --szs-faint );
+	border-top: 1px solid #dcdcde;
+}
+
+@media ( max-width: 960px ) {
+	.szesuti-shell {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 14px;
+	}
+
+	.szesuti-nav {
+		position: static;
+		overflow-x: auto;
+	}
+
+	.szesuti-nav ul {
+		display: inline-flex;
+		margin: 0 8px 0 0;
+		vertical-align: top;
+	}
+
+	.szesuti-nav__item {
+		white-space: nowrap;
+	}
+
+	.szesuti-nav__group,
+	.szesuti-nav__credit {
+		display: none;
+	}
+
+	.szesuti-nav {
+		white-space: nowrap;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.szesuti-header__org img {
+		height: 40px;
+	}
+
+	.szesuti-wrap {
+		--szs-pad: 16px;
+	}
 }
 
 /* ------------------------------------------------------------------ Panel */
 
 .szesuti-panel {
-	padding: 8px 24px 24px;
+	padding: 4px var( --szs-pad ) var( --szs-pad );
 	background: var( --szs-bg );
 	border: 1px solid var( --szs-border );
+	border-radius: var( --szs-radius );
+	counter-reset: szs-section;
+}
+
+/* Szekciócím: sorszám + cím, a szekciókat vékony vonal választja el. */
+.szesuti-wrap .szesuti-section {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	margin: 34px 0 4px;
+	padding: 24px 0 0;
+	font-size: 15px;
+	font-weight: 650;
+	line-height: 1.3;
+	color: var( --szs-ink );
+	border-top: 1px solid var( --szs-hair );
+	border-bottom: 0;
+}
+
+.szesuti-wrap .szesuti-section::before {
+	counter-increment: szs-section;
+	content: counter( szs-section, decimal-leading-zero );
+	flex: none;
+	font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+	font-size: 11px;
+	font-weight: 500;
+	color: var( --szs-accent );
+}
+
+.szesuti-wrap .szesuti-section:first-of-type {
+	margin-top: 20px;
+	padding-top: 0;
 	border-top: 0;
-	border-radius: 0 0 var( --szs-radius ) var( --szs-radius );
-}
-
-.szesuti-section {
-	margin: 28px 0 4px;
-	padding-bottom: 8px;
-	font-size: 16px;
-	border-bottom: 1px solid #f0f0f1;
-}
-
-.szesuti-section:first-child {
-	margin-top: 16px;
 }
 
 .szesuti-section-desc,
 .szesuti-subsection + .description {
-	max-width: 780px;
-	margin: 0 0 8px;
+	max-width: 760px;
+	margin: 2px 0 10px;
+	font-size: 13px;
 	color: var( --szs-muted );
 }
 
 .szesuti-subsection {
 	margin: 24px 0 8px;
-	font-size: 13px;
+	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	color: var( --szs-muted );
+	letter-spacing: 0.08em;
+	color: var( --szs-faint );
+}
+
+/* Űrlapsorok: címke és magyarázat balra, a mező jobbra, vonallal elválasztva. */
+.szesuti-table-form {
+	margin-top: 4px;
+}
+
+.szesuti-table-form > tbody > tr > th,
+.szesuti-table-form > tbody > tr > td {
+	border-top: 1px solid var( --szs-hair );
+}
+
+.szesuti-table-form > tbody > tr:first-child > th,
+.szesuti-table-form > tbody > tr:first-child > td {
+	border-top: 0;
 }
 
 .szesuti-table-form th {
-	width: 260px;
-	padding-left: 0;
+	width: 240px;
+	padding: 18px 24px 18px 0;
+	font-size: 13px;
 	font-weight: 600;
+	color: var( --szs-ink );
 	vertical-align: top;
 }
 
 .szesuti-table-form td {
-	padding-top: 14px;
+	padding: 15px 0;
+}
+
+.szesuti-th-desc {
+	margin: 4px 0 0;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var( --szs-muted );
 }
 
 .szesuti-table-form .description {
 	max-width: 640px;
+	margin-top: 6px;
+	color: var( --szs-muted );
 }
 
 .szesuti-suffix {
@@ -223,15 +388,254 @@
 	color: var( --szs-muted );
 }
 
+/* Mentősáv: a panel alján ragad, és jelzi a még nem mentett módosítást. */
 .szesuti-submit {
 	position: sticky;
 	bottom: 0;
 	z-index: 5;
-	margin: 28px -24px -24px;
-	padding: 16px 24px;
-	background: #fbfbfc;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+	margin: 32px calc( -1 * var( --szs-pad ) ) calc( -1 * var( --szs-pad ) );
+	padding: 14px var( --szs-pad );
+	background: var( --szs-bg );
 	border-top: 1px solid var( --szs-border );
 	border-radius: 0 0 var( --szs-radius ) var( --szs-radius );
+}
+
+.szesuti-submit__state {
+	display: none;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	color: var( --szs-muted );
+}
+
+.szesuti-submit__state::before {
+	content: "";
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #dba617;
+}
+
+.szesuti-submit.is-dirty .szesuti-submit__state {
+	display: inline-flex;
+}
+
+/* ---------------------------------------------------- Kinézetválasztó */
+
+.szesuti-designpick {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+}
+
+.szesuti-designpick__opt {
+	position: relative;
+	display: block;
+	width: 270px;
+	max-width: 100%;
+	cursor: pointer;
+}
+
+.szesuti-designpick__opt input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.szesuti-designpick__card {
+	display: block;
+	overflow: hidden;
+	background: var( --szs-bg );
+	border: 1px solid var( --szs-border );
+	border-radius: var( --szs-radius );
+	transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.szesuti-designpick__opt:hover .szesuti-designpick__card {
+	border-color: #a7aaad;
+}
+
+.szesuti-designpick__opt input:checked + .szesuti-designpick__card {
+	border-color: var( --szs-accent );
+	box-shadow: 0 0 0 1px var( --szs-accent );
+}
+
+.szesuti-designpick__opt input:focus-visible + .szesuti-designpick__card {
+	outline: 2px solid var( --szs-accent );
+	outline-offset: 3px;
+}
+
+.szesuti-designpick__text {
+	display: block;
+	padding: 12px 14px 13px;
+	border-top: 1px solid var( --szs-border );
+}
+
+.szesuti-designpick__text strong {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var( --szs-ink );
+}
+
+.szesuti-designpick__text strong::before {
+	content: "";
+	flex: none;
+	width: 12px;
+	height: 12px;
+	border: 1.5px solid #8c8f94;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+
+.szesuti-designpick__opt input:checked + .szesuti-designpick__card strong::before {
+	border: 4px solid var( --szs-accent );
+}
+
+.szesuti-designpick__text span {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	line-height: 1.5;
+	color: var( --szs-muted );
+}
+
+/* Vázlatrajz: egy kicsinyített banner a pöttyözött „weboldalon”. */
+.szesuti-sketch {
+	display: flex;
+	align-items: flex-end;
+	height: 138px;
+	padding: 0 16px 14px;
+	background-color: var( --szs-soft );
+	background-image: radial-gradient( #dcdfe4 1px, transparent 1px );
+	background-size: 11px 11px;
+}
+
+.szesuti-sketch i {
+	display: block;
+}
+
+.szesuti-sketch__box {
+	display: block;
+	width: 172px;
+	padding: 10px;
+	overflow: hidden;
+	background: #fff;
+	border: 1px solid #e1e4e8;
+	border-radius: 7px;
+	box-shadow: 0 6px 16px rgba( 12, 18, 32, 0.1 );
+}
+
+.szesuti-sketch__head {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 7px;
+}
+
+.szesuti-sketch__icon {
+	flex: none;
+	width: 13px;
+	height: 13px;
+	background: #e6ecf8;
+	border-radius: 4px;
+}
+
+.szesuti-sketch__title {
+	width: 62px;
+	height: 6px;
+	background: #2c3338;
+	border-radius: 3px;
+}
+
+.szesuti-sketch__line {
+	height: 4px;
+	margin-bottom: 4px;
+	background: #d5d9df;
+	border-radius: 2px;
+}
+
+.szesuti-sketch__line--short {
+	width: 62%;
+}
+
+.szesuti-sketch__actions {
+	display: flex;
+	gap: 4px;
+	margin-top: 9px;
+}
+
+.szesuti-sketch__btn {
+	flex: 1 1 0;
+	height: 11px;
+	background: #e9ecf1;
+	border-radius: 3px;
+}
+
+.szesuti-sketch__btn--primary {
+	background: #2d6cdf;
+}
+
+.szesuti-sketch__btn--ghost {
+	background: transparent;
+	box-shadow: inset 0 0 0 1px #d5d9df;
+}
+
+.szesuti-sketch--modern .szesuti-sketch__box {
+	box-shadow: inset 0 2px 0 #2d6cdf, 0 6px 16px rgba( 12, 18, 32, 0.1 );
+}
+
+.szesuti-sketch--modern .szesuti-sketch__head {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+}
+
+.szesuti-sketch--modern .szesuti-sketch__icon {
+	background: #2d6cdf;
+}
+
+.szesuti-sketch--modern .szesuti-sketch__title {
+	width: 88px;
+	height: 8px;
+}
+
+.szesuti-sketch--modern .szesuti-sketch__actions {
+	align-items: center;
+	margin: 9px -10px -10px;
+	padding: 7px 10px;
+	background: #f3f5f9;
+	border-top: 1px solid #e1e4e8;
+}
+
+.szesuti-sketch--modern .szesuti-sketch__btn--ghost {
+	flex: 0 0 24px;
+	height: 3px;
+	background: #9aa1ad;
+	box-shadow: none;
+}
+
+/* Két színmező egymás mellett (pl. a lebegő gomb háttere és ikonja). */
+.szesuti-color-pair {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	max-width: 560px;
+}
+
+.szesuti-color-pair .szesuti-color {
+	flex: 1 1 240px;
+	margin: 0;
+}
+
+.szesuti-color-pair + .szesuti-note {
+	margin-top: 10px;
 }
 
 /* ---------------------------------------------------------- Kapcsoló mező */
@@ -538,10 +942,10 @@ code.szesuti-hostlist {
 	font-size: 12px;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
-	color: var( --szs-accent );
-	background: #f0f6fc;
-	border: 1px solid #c5d9ed;
-	border-radius: 999px;
+	color: var( --szs-ink );
+	background: var( --szs-soft );
+	border: 1px solid var( --szs-border );
+	border-radius: 5px;
 	text-align: center;
 }
 
@@ -567,10 +971,11 @@ code.szesuti-hostlist {
 	align-items: center;
 	justify-content: space-between;
 	gap: 12px;
-	padding: 7px 10px;
-	border: 1px solid #f0f0f1;
-	border-radius: 8px;
-	margin-bottom: 4px;
+	padding: 6px 8px 6px 12px;
+	border: 1px solid var( --szs-border );
+	border-radius: 6px;
+	margin-bottom: 6px;
+	background: var( --szs-bg );
 }
 
 .szesuti-color__label {
@@ -608,7 +1013,8 @@ code.szesuti-hostlist {
 }
 
 .szesuti-color--optional {
-	background: #fbfbfc;
+	background: var( --szs-bg );
+	border-style: dashed;
 }
 
 .wp-core-ui .button-link.szesuti-color__clear {
@@ -745,10 +1151,12 @@ code.szesuti-hostlist {
 	position: sticky;
 	top: 32px;
 	z-index: 20;
-	margin: 16px -24px 8px;
-	padding: 12px 24px 10px;
-	background: #fbfbfc;
+	/* A panel felső belső margóját (4px) is kitölti, hogy a széléig érjen. */
+	margin: -4px calc( -1 * var( --szs-pad ) ) 8px;
+	padding: 14px var( --szs-pad ) 10px;
+	background: var( --szs-soft );
 	border-bottom: 1px solid var( --szs-border );
+	border-radius: var( --szs-radius ) var( --szs-radius ) 0 0;
 	box-shadow: 0 6px 14px -10px rgba( 0, 0, 0, 0.25 );
 }
 
@@ -1224,7 +1632,7 @@ code.szesuti-hostlist {
 
 .szesuti-card {
 	padding: 18px 20px;
-	background: #fbfbfc;
+	background: var( --szs-bg );
 	border: 1px solid var( --szs-border );
 	border-radius: var( --szs-radius );
 }
@@ -1412,6 +1820,22 @@ code.szesuti-hostlist {
 .szesuti-log-count {
 	margin: 0 0 8px;
 	color: var( --szs-muted );
+}
+
+/* A széles táblázat a panelen belül görgethető, nem lóg ki belőle. */
+.szesuti-table-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	border: 1px solid var( --szs-border );
+	border-radius: 6px;
+}
+
+.szesuti-table-scroll > .widefat {
+	border: 0;
+}
+
+.szesuti-log-table td:first-child {
+	white-space: nowrap;
 }
 
 .szesuti-log-table td,

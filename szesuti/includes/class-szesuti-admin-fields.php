@@ -389,6 +389,56 @@ class SZESUTI_Admin_Fields {
 	}
 
 	/**
+	 * Kinézetválasztó: kattintható kártyák egy-egy vázlatos bannerrajzzal.
+	 *
+	 * @param array  $path    Útvonal.
+	 * @param string $value   Kiválasztott érték.
+	 * @param array  $options érték => array( 'label' => ..., 'desc' => ... ).
+	 * @param array  $args    label, desc.
+	 */
+	public static function design_picker( array $path, $value, array $options, $args = array() ) {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'label' => '',
+				'desc'  => '',
+			)
+		);
+
+		self::row_start( $args['label'] );
+
+		echo '<div class="szesuti-designpick" role="radiogroup" aria-label="' . esc_attr( $args['label'] ) . '">';
+		foreach ( $options as $key => $opt ) {
+			$key = (string) $key;
+			echo '<label class="szesuti-designpick__opt">';
+			printf(
+				'<input type="radio" name="%1$s" value="%2$s"%3$s />',
+				esc_attr( self::name( $path ) ),
+				esc_attr( $key ),
+				checked( (string) $value, $key, false )
+			);
+			echo '<span class="szesuti-designpick__card">';
+			// Vázlat: fejléc, szövegsorok, gombsor – a két kinézet a CSS-ben tér el.
+			echo '<span class="szesuti-sketch szesuti-sketch--' . esc_attr( sanitize_html_class( $key ) ) . '" aria-hidden="true">';
+			echo '<span class="szesuti-sketch__box">';
+			echo '<span class="szesuti-sketch__head"><i class="szesuti-sketch__icon"></i><i class="szesuti-sketch__title"></i></span>';
+			echo '<i class="szesuti-sketch__line"></i><i class="szesuti-sketch__line"></i><i class="szesuti-sketch__line szesuti-sketch__line--short"></i>';
+			echo '<span class="szesuti-sketch__actions"><i class="szesuti-sketch__btn szesuti-sketch__btn--primary"></i><i class="szesuti-sketch__btn"></i><i class="szesuti-sketch__btn szesuti-sketch__btn--ghost"></i></span>';
+			echo '</span></span>';
+			echo '<span class="szesuti-designpick__text">';
+			echo '<strong>' . esc_html( isset( $opt['label'] ) ? $opt['label'] : $key ) . '</strong>';
+			if ( ! empty( $opt['desc'] ) ) {
+				echo '<span>' . esc_html( $opt['desc'] ) . '</span>';
+			}
+			echo '</span></span></label>';
+		}
+		echo '</div>';
+
+		self::desc( $args['desc'] );
+		self::row_end();
+	}
+
+	/**
 	 * Leírás kiírása a mező alá.
 	 *
 	 * @param string $desc Leírás (korlátozott HTML megengedett).

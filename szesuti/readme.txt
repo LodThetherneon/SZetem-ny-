@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, cookie consent, consent mode
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.2
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,22 @@ IP-címet nem. Az IP-ből saltinggal képzett SHA-256 lenyomatot képez, ami ön
 vissza. Az URL és a böngészőazonosító mentése külön ki-be kapcsolható.
 
 == Changelog ==
+
+= 1.3.0 =
+* Új: a lebegő „Süti beállítások” gomb színe állítható (Általános → Lebegő gomb → Színek:
+  háttér és ikon). Eddig mindig a banner hátterét és az elfogadás gomb színét kapta, ami
+  sok oldal arculatához nem illett. Üresen hagyva minden marad a régiben. A kontrasztőr
+  ezt is figyeli: ha az ikon a választott háttéren nem látszana, olvasható színt kap.
+* Új: második bannerkinézet (Megjelenés → Kinézet: Klasszikus / Modern). A modern
+  változatban kiemelőszínű csík van felül, az ikon a cím fölött áll, a gombok egy külön
+  sávban a doboz alján, a sáv elrendezés pedig a képernyő szélétől elemelt „dokk”. A
+  beállítások ablakban a kártyák helyett vonallal elválasztott sorok vannak. Az alapérték
+  a klasszikus, így a frissítés egyetlen oldal megjelenését sem változtatja meg magától.
+* Megújult az admin felület: oldalsó navigáció (a Háttéradatbázis és a napló is ebben a
+  keretben nyílik), sorszámozott szekciók, tömörebb fejléc, és a mentősáv jelzi, ha van
+  még nem mentett módosítás. A kiemelőszín a WordPress felhasználói színsémáját követi.
+* Az új beállítások (`appearance.design`, `general.reopen_bg`, `general.reopen_fg`) a JSON
+  exportban is benne vannak, és a régebbi exportok importja az alapértéket adja nekik.
 
 = 1.2.2 =
 * A Tailwind CSS „Play CDN” (`cdn.tailwindcss.com`) felkerült a beépített biztonságos külső

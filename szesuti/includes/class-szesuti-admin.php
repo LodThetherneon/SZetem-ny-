@@ -670,7 +670,7 @@ class SZESUTI_Admin {
 		$this->render_messages();
 
 		$this->render_header();
-		$this->render_tabs( $tab );
+		$this->open_shell( $tab );
 
 		echo '<div class="szesuti-panel">';
 
@@ -694,13 +694,16 @@ class SZESUTI_Admin {
 				$this->$method( $s );
 			}
 
-			echo '<p class="szesuti-submit">';
+			echo '<div class="szesuti-submit">';
 			submit_button( __( 'Beállítások mentése', 'szesuti' ), 'primary large', 'submit', false );
-			echo '</p>';
+			echo '<span class="szesuti-submit__state" data-szesuti-dirty-label>' . esc_html__( 'Nem mentett módosítások', 'szesuti' ) . '</span>';
+			echo '</div>';
 			echo '</form>';
 		}
 
-		echo '</div></div>';
+		echo '</div>';
+		$this->close_shell();
+		echo '</div>';
 	}
 
 	/** Oldalfejléc (a Háttéradatbázis oldal is ezt használja). */
@@ -711,33 +714,96 @@ class SZESUTI_Admin {
 				<a class="szesuti-header__org" href="https://adatvedelemteszt.sze.hu" target="_blank" rel="noopener noreferrer">
 					<img src="<?php echo esc_url( SZESUTI_URL . 'assets/img/sze-logo.png' ); ?>" width="181" height="240" alt="<?php esc_attr_e( 'Széchenyi István Egyetem', 'szesuti' ); ?>" />
 				</a>
-				<span class="szesuti-header__sep" aria-hidden="true"></span>
 				<div class="szesuti-header__text">
 					<h1>SZetemény</h1>
 					<p><?php esc_html_e( 'GDPR-kompatibilis sütikezelő és szkriptblokkoló', 'szesuti' ); ?></p>
-					<p class="szesuti-header__author">
-						<?php
-						printf(
-							/* translators: %s: a készítő szervezeti egység neve */
-							esc_html__( 'Készítette: %s', 'szesuti' ),
-							'<strong>' . esc_html__( 'Műszaki Fejlesztési és Üzemeltetési Igazgatóság', 'szesuti' ) . '</strong>'
-						);
-						?>
-						<span aria-hidden="true">·</span>
-						<?php esc_html_e( 'Széchenyi István Egyetem', 'szesuti' ); ?>
-					</p>
 				</div>
 			</div>
 			<div class="szesuti-header__meta">
-				<span class="szesuti-badge"><?php echo esc_html( 'v' . SZESUTI_VERSION ); ?></span>
 				<?php if ( $this->settings->get( 'general.enabled', 1 ) ) : ?>
-					<span class="szesuti-badge szesuti-badge--on"><?php esc_html_e( 'Aktív', 'szesuti' ); ?></span>
+					<span class="szesuti-status szesuti-status--on"><?php esc_html_e( 'Aktív a látogatói oldalon', 'szesuti' ); ?></span>
 				<?php else : ?>
-					<span class="szesuti-badge szesuti-badge--off"><?php esc_html_e( 'Kikapcsolva', 'szesuti' ); ?></span>
+					<span class="szesuti-status szesuti-status--off"><?php esc_html_e( 'Kikapcsolva', 'szesuti' ); ?></span>
 				<?php endif; ?>
+				<span class="szesuti-header__version"><?php echo esc_html( 'v' . SZESUTI_VERSION ); ?></span>
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Az oldalsó navigáció és a tartalom kerete. A beállítások, a Háttéradatbázis
+	 * és a napló oldal is ezt használja, így mindhárom egy felületnek látszik.
+	 *
+	 * @param string $current Az aktív menüpont (fül kulcsa, 'library' vagy 'log').
+	 */
+	public function open_shell( $current ) {
+		$icons = array(
+			'general'    => 'admin-generic',
+			'appearance' => 'art',
+			'texts'      => 'editor-paragraph',
+			'categories' => 'category',
+			'blocker'    => 'shield',
+			'gcm'        => 'google',
+			'cookies'    => 'list-view',
+			'log'        => 'clipboard',
+			'tools'      => 'admin-tools',
+		);
+
+		echo '<div class="szesuti-shell">';
+		echo '<nav class="szesuti-nav" aria-label="' . esc_attr__( 'SZetemény menü', 'szesuti' ) . '">';
+
+		echo '<p class="szesuti-nav__group">' . esc_html__( 'Beállítások', 'szesuti' ) . '</p>';
+		echo '<ul>';
+		foreach ( $this->tabs() as $key => $label ) {
+			$this->nav_item(
+				add_query_arg( array( 'page' => 'szesuti', 'tab' => $key ), admin_url( 'admin.php' ) ),
+				$label,
+				isset( $icons[ $key ] ) ? $icons[ $key ] : 'admin-generic',
+				$key === $current
+			);
+		}
+		echo '</ul>';
+
+		echo '<p class="szesuti-nav__group">' . esc_html__( 'Adatok', 'szesuti' ) . '</p>';
+		echo '<ul>';
+		if ( $this->library_page ) {
+			$this->nav_item( admin_url( 'admin.php?page=' . SZESUTI_Admin_Library::PAGE ), __( 'Háttéradatbázis', 'szesuti' ), 'database', 'library' === $current );
+		}
+		$this->nav_item( admin_url( 'admin.php?page=szesuti-log' ), __( 'Hozzájárulás-napló', 'szesuti' ), 'media-spreadsheet', 'log-page' === $current );
+		echo '</ul>';
+
+		echo '<p class="szesuti-nav__credit">';
+		echo esc_html__( 'Műszaki Fejlesztési és Üzemeltetési Igazgatóság', 'szesuti' ) . '<br>';
+		echo esc_html__( 'Széchenyi István Egyetem', 'szesuti' );
+		echo '</p>';
+
+		echo '</nav>';
+		echo '<div class="szesuti-main">';
+	}
+
+	/** A keret lezárása. */
+	public function close_shell() {
+		echo '</div></div>';
+	}
+
+	/**
+	 * Egy menüpont.
+	 *
+	 * @param string $url    Cél.
+	 * @param string $label  Felirat.
+	 * @param string $icon   Dashicon neve (előtag nélkül).
+	 * @param bool   $active Aktív-e.
+	 */
+	private function nav_item( $url, $label, $icon, $active ) {
+		printf(
+			'<li><a href="%1$s" class="szesuti-nav__item%2$s"%3$s><span class="dashicons dashicons-%4$s" aria-hidden="true"></span><span>%5$s</span></a></li>',
+			esc_url( $url ),
+			$active ? ' is-active' : '',
+			$active ? ' aria-current="page"' : '',
+			esc_attr( $icon ),
+			esc_html( $label )
+		);
 	}
 
 	/**
@@ -935,24 +1001,6 @@ class SZESUTI_Admin {
 		<?php
 	}
 
-	/**
-	 * Fülek kirajzolása.
-	 *
-	 * @param string $current Aktuális fül.
-	 */
-	private function render_tabs( $current ) {
-		echo '<nav class="szesuti-tabs">';
-		foreach ( $this->tabs() as $key => $label ) {
-			printf(
-				'<a href="%1$s" class="szesuti-tab%2$s">%3$s</a>',
-				esc_url( add_query_arg( array( 'page' => 'szesuti', 'tab' => $key ), admin_url( 'admin.php' ) ) ),
-				$key === $current ? ' is-active' : '',
-				esc_html( $label )
-			);
-		}
-		echo '</nav>';
-	}
-
 	/** A Háttéradatbázis oldal. */
 	public function render_library_page() {
 		if ( ! current_user_can( self::CAPABILITY ) || ! $this->library_page ) {
@@ -966,7 +1014,7 @@ class SZESUTI_Admin {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
 			return;
 		}
-		$page = new SZESUTI_Admin_Log( $this->settings, $this->log );
+		$page = new SZESUTI_Admin_Log( $this->settings, $this->log, $this );
 		$page->render();
 	}
 

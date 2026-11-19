@@ -221,7 +221,8 @@ class SZESUTI_Admin_Library {
 		echo '<hr class="wp-header-end">';
 		$this->admin->render_messages();
 		$this->admin->render_header();
-		echo '<div class="szesuti-panel szesuti-panel--solo">';
+		$this->admin->open_shell( 'library' );
+		echo '<div class="szesuti-panel">';
 
 		SZESUTI_F::section(
 			__( 'Háttéradatbázis', 'szesuti' ),
@@ -453,6 +454,8 @@ class SZESUTI_Admin_Library {
 		</div>
 
 		<?php
-		echo '</div></div>';
+		echo '</div>';
+		$this->admin->close_shell();
+		echo '</div>';
 	}
 }

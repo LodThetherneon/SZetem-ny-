@@ -41,6 +41,8 @@ class SZESUTI_Settings {
 				'reopen_hide_mobile'  => 0,
 				'reopen_offset_x'     => 20,
 				'reopen_offset_y'     => 20,
+				'reopen_bg'           => '', // Lebegő gomb háttere – üres: a banner háttérszíne.
+				'reopen_fg'           => '', // Lebegő gomb ikonja – üres: a kiemelőszín.
 				'privacy_url'         => '',
 				'cookie_policy_url'   => '',
 				'imprint_url'         => '',
@@ -57,6 +59,9 @@ class SZESUTI_Settings {
 			),
 
 			'appearance' => array(
+				// A banner kinézete: classic (az 1.x megjelenés) | modern. A frissítés
+				// ne változtassa meg a meglévő oldalakat, ezért a klasszikus az alapérték.
+				'design'          => 'classic',
 				'layout'          => 'box',
 				'position'        => 'bottom-left',
 				'theme'           => 'light',
@@ -629,7 +634,9 @@ class SZESUTI_Settings {
 			'reopen_hide_mobile'  => $this->bool( $g, 'reopen_hide_mobile' ),
 			'reopen_offset_x'     => $this->int_range( $g, 'reopen_offset_x', 0, 400, 20 ),
 			'reopen_offset_y'     => $this->int_range( $g, 'reopen_offset_y', 0, 400, 20 ),
-			'privacy_url'         => esc_url_raw( $this->str( $g, 'privacy_url', '' ) ),
+			'reopen_bg'           => $this->optional_color( $g, 'reopen_bg' ),
+			'reopen_fg'           => $this->optional_color( $g, 'reopen_fg' ),
+			'privacy_url'       => esc_url_raw( $this->str( $g, 'privacy_url', '' ) ),
 			'cookie_policy_url'   => esc_url_raw( $this->str( $g, 'cookie_policy_url', '' ) ),
 			'imprint_url'         => esc_url_raw( $this->str( $g, 'imprint_url', '' ) ),
 			'exclude_urls'        => $this->sanitize_multiline( $this->str( $g, 'exclude_urls', '' ) ),
@@ -667,6 +674,7 @@ class SZESUTI_Settings {
 		/* --- appearance --- */
 		$a                 = ( isset( $raw['appearance'] ) && is_array( $raw['appearance'] ) ) ? $raw['appearance'] : array();
 		$out['appearance'] = array(
+			'design'          => $this->one_of( $this->str( $a, 'design', '' ), array( 'classic', 'modern' ), 'classic' ),
 			'layout'          => $this->one_of( $this->str( $a, 'layout', '' ), array( 'box', 'bar', 'modal' ), 'box' ),
 			'position'        => $this->one_of( $this->str( $a, 'position', '' ), array( 'bottom-left', 'bottom-right', 'bottom-center', 'top-left', 'top-right', 'top-center' ), 'bottom-left' ),
 			'theme'           => $this->one_of( $this->str( $a, 'theme', '' ), array( 'light', 'dark', 'auto' ), 'light' ),
@@ -957,6 +965,18 @@ class SZESUTI_Settings {
 	private function sanitize_css( $css ) {
 		$css = wp_strip_all_tags( (string) $css );
 		return trim( str_replace( array( '<', '>' ), '', $css ) );
+	}
+
+	/**
+	 * Üresen hagyható szín: érvényes hex vagy üres („automatikus”).
+	 *
+	 * @param array  $arr Tömb.
+	 * @param string $key Kulcs.
+	 * @return string
+	 */
+	private function optional_color( $arr, $key ) {
+		$value = sanitize_hex_color( $this->str( $arr, $key, '' ) );
+		return $value ? $value : '';
 	}
 
 	private function sanitize_colors( $colors, array $defaults ) {
